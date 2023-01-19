@@ -6,13 +6,13 @@ MONTH=`date +%Y-%d`
 DAY=`date +%Y-%m-%d`
 NOW="$(date +"%Y-%m-%d_%H-%M-%S")"
 # Variable Section -------------------------------------------
-DOMAIN_NAME=devopshobbies.com
+DOMAIN_NAME=sadriniaa.ir
 HostName=$DOMAIN_NAME
-SSH_PORT=1242
+SSH_PORT=2580
 BAC_DIR=/opt/backup/files_$NOW
 # docker config destination
 DOCKER_DEST=/etc/systemd/system/docker.service.d/
-MIRROR_REGISTRY=https://docker.jamko.ir
+MIRROR_REGISTRY=https://registery.tlandino.net
 #-------------------------------------------------------------
 
 echo "Info: ------------------------------------"
@@ -37,81 +37,81 @@ apt update && apt upgrade -y
 apt remove -y snapd && apt purge -y snapd
 
 # install tools
-apt install -y wget git vim nano bash-completion curl htop iftop jq ncdu unzip net-tools dnsutils \
-               atop sudo ntp fail2ban software-properties-common apache2-utils tcpdump telnet axel
+apt install -y wget git vim nano bash-completion curl htop  jq ncdu unzip net-tools dnsutils \
+                 ntp fail2ban software-properties-common apache2-utils tcpdump telnet axel
 
 # Host Configuration ------------------------------------------
 echo -e " \e[30;48;5;56m \e[1m \e[38;5;15mHostname Configuration \e[0m"
 hostnamectl set-hostname $HostName
 
 # Timeout Config -----------------------------------------------
-echo -e " \e[30;48;5;56m \e[1m \e[38;5;15mTimeout Setting \e[0m"
-echo -e '#!/bin/bash\n### 300 seconds == 5 minutes ##\nTMOUT=300\nreadonly TMOUT\nexport TMOUT' > /etc/profile.d/timout-settings.sh
-cat /etc/profile.d/timout-settings.sh
+# echo -e " \e[30;48;5;56m \e[1m \e[38;5;15mTimeout Setting \e[0m"
+# echo -e '#!/bin/bash\n### 300 seconds == 5 minutes ##\nTMOUT=300\nreadonly TMOUT\nexport TMOUT' > /etc/profile.d/timout-settings.sh
+# cat /etc/profile.d/timout-settings.sh
 
 #config sysctl.conf: -----------------------------------------
-cp /etc/sysctl.conf $BAC_DIR
-echo -e " \e[30;48;5;56m \e[1m \e[38;5;15mSysctl Configuration \e[0m"
-cat <<EOT >> /etc/sysctl.conf
-# Decrease TIME_WAIT seconds
-net.ipv4.tcp_fin_timeout = 30
+# cp /etc/sysctl.conf $BAC_DIR
+# echo -e " \e[30;48;5;56m \e[1m \e[38;5;15mSysctl Configuration \e[0m"
+# cat <<EOT >> /etc/sysctl.conf
+# # Decrease TIME_WAIT seconds
+# net.ipv4.tcp_fin_timeout = 30
  
-# Recycle and Reuse TIME_WAIT sockets faster
-net.ipv4.tcp_tw_recycle = 1
-net.ipv4.tcp_tw_reuse = 1
+# # Recycle and Reuse TIME_WAIT sockets faster
+# net.ipv4.tcp_tw_recycle = 1
+# net.ipv4.tcp_tw_reuse = 1
 
-# Decrease ESTABLISHED seconds
-net.netfilter.nf_conntrack_tcp_timeout_established=3600
+# # Decrease ESTABLISHED seconds
+# net.netfilter.nf_conntrack_tcp_timeout_established=3600
 
-# Maximum Number Of Open Files
-fs.file-max = 500000
+# # Maximum Number Of Open Files
+# fs.file-max = 500000
 
-# 
-vm.max_map_count=262144
+# # 
+# vm.max_map_count=262144
 
-net.ipv4.ip_nonlocal_bind = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward = 1
+# net.ipv4.ip_nonlocal_bind = 1
+# net.bridge.bridge-nf-call-iptables = 1
+# net.bridge.bridge-nf-call-ip6tables = 1
+# net.ipv4.ip_forward = 1
 
-#Kernel Hardening
-fs.suid_dumpable = 0
-kernel.core_uses_pid = 1
-kernel.dmesg_restrict = 1
-kernel.kptr_restrict = 2
-kernel.sysrq = 0 
-net.ipv4.conf.all.log_martians = 1
-net.ipv6.conf.all.accept_redirects = 0
-net.ipv6.conf.default.accept_redirects = 0
+# #Kernel Hardening
+# fs.suid_dumpable = 0
+# kernel.core_uses_pid = 1
+# kernel.dmesg_restrict = 1
+# kernel.kptr_restrict = 2
+# kernel.sysrq = 0 
+# net.ipv4.conf.all.log_martians = 1
+# net.ipv6.conf.all.accept_redirects = 0
+# net.ipv6.conf.default.accept_redirects = 0
 
-#New Kernel Hardening
-net.ipv4.conf.all.forwarding = 1
-net.ipv4.conf.all.send_redirects = 0
-net.ipv4.conf.default.accept_redirects = 0
-net.ipv4.conf.default.accept_source_route = 0
-net.ipv4.conf.default.log_martians = 1
-net.ipv4.conf.all.accept_redirects = 0
+# #New Kernel Hardening
+# net.ipv4.conf.all.forwarding = 1
+# net.ipv4.conf.all.send_redirects = 0
+# net.ipv4.conf.default.accept_redirects = 0
+# net.ipv4.conf.default.accept_source_route = 0
+# net.ipv4.conf.default.log_martians = 1
+# net.ipv4.conf.all.accept_redirects = 0
 
-# Disable Ipv6
-net.ipv6.conf.all.disable_ipv6=1
-net.ipv6.conf.default.disable_ipv6=1
-net.ipv6.conf.lo.disable_ipv6=1
-net.ipv4.conf.all.rp_filter=1
-kernel.yama.ptrace_scope=1
-EOT
-echo "root soft nofile 65535" >  /etc/security/limits.conf
-echo "root hard nofile 65535" >> /etc/security/limits.conf
-echo "root soft nproc 65535" >> /etc/security/limits.conf
-echo "root hard nproc 65535" >> /etc/security/limits.conf
+# # Disable Ipv6
+# net.ipv6.conf.all.disable_ipv6=1
+# net.ipv6.conf.default.disable_ipv6=1
+# net.ipv6.conf.lo.disable_ipv6=1
+# net.ipv4.conf.all.rp_filter=1
+# kernel.yama.ptrace_scope=1
+# EOT
+# echo "root soft nofile 65535" >  /etc/security/limits.conf
+# echo "root hard nofile 65535" >> /etc/security/limits.conf
+# echo "root soft nproc 65535" >> /etc/security/limits.conf
+# echo "root hard nproc 65535" >> /etc/security/limits.conf
 
-echo "* soft nofile 2048" >  /etc/security/limits.conf
-echo "* hard nofile 2048" >> /etc/security/limits.conf
-echo "* soft nproc  2048" >> /etc/security/limits.conf
-echo "* hard nproc  2048" >> /etc/security/limits.conf
-modprobe br_netfilter
+# echo "* soft nofile 2048" >  /etc/security/limits.conf
+# echo "* hard nofile 2048" >> /etc/security/limits.conf
+# echo "* soft nproc  2048" >> /etc/security/limits.conf
+# echo "* hard nproc  2048" >> /etc/security/limits.conf
+# modprobe br_netfilter
 
-# sysctl config apply 
-sysctl -p
+# # sysctl config apply 
+# sysctl -p
 
 #-------------------------------------------------------------
 # postfix Service: disable, stop and mask
